@@ -14,9 +14,12 @@ public class parserItem {
 		refUri = a;
 		sCode = b;
 		statement = c;
-		for (int temp = 0; temp < numOfVideo; temp++)
+		if (arr == null) {
+			return;
+		}
+		for (int temp = 0; temp < arr.length; temp++)
 		{
-			if (arr[temp] != null)
+			if ((arr[temp] != null) && (temp < 3)) 
 				youtubeUrl[temp] = arr[temp];
 		}
 	};
@@ -27,10 +30,14 @@ public class parserItem {
 		System.out.println("--------------------------------------------------------------");
 		System.out.println(sCode + " - " + statement + "\n" + refUri);
 		System.out.println("--------------------------------------------------------------");
-		for(int temp = 0; temp< numOfVideo; temp++)
-		{
-			System.out.println(youtubeUrl[temp]);
+		if( youtubeUrl != null){
+			for(int temp = 0; temp< youtubeUrl.length; temp++)
+			{
+				if (youtubeUrl[temp] != null)
+					System.out.println(youtubeUrl[temp]);
+			}	
 		}
+		
 		System.out.println("\n");
 		return 0;
 	}

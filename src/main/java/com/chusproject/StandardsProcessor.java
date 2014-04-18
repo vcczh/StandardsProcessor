@@ -14,14 +14,19 @@ import java.util.ArrayList;
 public class StandardsProcessor
 {
 
-
+	/**
+     *  Standards Processor Method 
+     */
 	public static int ccparser(String filename)
 	{
 		try{
-			if (filename != "") {
+			if (filename == "") {
 				filename = "src/main/xml/Common-Core-Xml/math.xml";
 			}
         	File fXmlFile = new File(filename);
+
+        	// Using DOM to parse the XML file
+
         	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         	Document doc = dBuilder.parse(fXmlFile);
@@ -36,9 +41,15 @@ public class StandardsProcessor
         	
         	System.out.println("Number of LearningStandard Items: "+ nList.getLength());
 
+
+        	//resule set to store all the parserItem
+
         	parserItem[] respi = new parserItem[nList.getLength()];
         	int tempindex = 0;
         	
+
+        	// For each standard statement, generate on parserItem (as product in Factory mathod) and add into result set.
+
         	for (int temp = 0; temp < nList.getLength(); temp++) {
         		 
         		Node nNode = nList.item(temp);
@@ -48,15 +59,16 @@ public class StandardsProcessor
         		if (nNode.getNodeType() == Node.ELEMENT_NODE) {
          
         			Element eElement = (Element) nNode;
-        			//System.out.println(eElement.getElementsByTagName("RefURI").item(0).getTextContent());
-        			//System.out.println(eElement.getElementsByTagName("StatementCode").item(0).getTextContent());
-        			//System.out.println(eElement.getElementsByTagName("Statement").item(0).getTextContent());
         			String a = eElement.getElementsByTagName("RefURI").item(0).getTextContent();
         			String b = eElement.getElementsByTagName("StatementCode").item(0).getTextContent();
         			String c = eElement.getElementsByTagName("Statement").item(0).getTextContent();
+        			
+        			// Issue youtube search
 
         			Search currsearch = new Search();
-        			parserItem pi = new parserItem(a,b,c, currsearch.searchYoutube(eElement.getElementsByTagName("Statement").item(0).getTextContent()));
+        			String[] darr = currsearch.searchYoutube(eElement.getElementsByTagName("Statement").item(0).getTextContent());
+
+        			parserItem pi = new parserItem(a,b,c, darr);
         			respi[tempindex] = pi;
         			tempindex++;
         			System.out.println(" Search completed: " + temp + "/" + nList.getLength());
@@ -65,6 +77,8 @@ public class StandardsProcessor
         	}
 
         	System.out.println("============================================================");
+
+        	//Print all the result
 
         	for (int temp = 0; temp < respi.length; temp++ ) {
         		respi[temp].printItem();
@@ -77,25 +91,26 @@ public class StandardsProcessor
         return 0;
 	}
 
-
+	 /**
+     * Main entrance of the StandardsProcessor 
+     */
     public static void main( String[] args )
     {
         System.out.println( "StandardsProcessor starts." );
         String foldername = "src/main/xml/Common-Core-Xml";
+
+        //Open the dir to read all the file and parser it one by one
+        //Even the xml file has the error, the loop will not end and automatically reject them.
+
         final File folder = new File(foldername);
         for (final File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isDirectory()) {
-	     			
+	     			// If the subDir is also required, it is easy to iterate here
 	        } else {
-	            //System.out.println(fileEntry.getName());
-	            ccparser(foldername+fileEntry.getName());
-	        }
+	        	if(fileEntry.getName().toLowerCase().endsWith(".xml"))
+		        	//Call parser here with the file name
+		            ccparser(foldername + "/" + fileEntry.getName());
+		    }
 	    }
-
-        //ccparser("src/main/xml/Common-Core-Xml/math.xml");
-		
-		//ccparser("src/main/xml/Common-Core-Xml/ela-literacy.xml");
-        
-
     }
 }
